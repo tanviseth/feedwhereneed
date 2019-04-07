@@ -1,0 +1,96 @@
+<html>
+
+<title>Feed where Need</title>
+
+  <style>
+    body {
+    
+padding: 0;
+margin: 0;
+      text-align: center;
+     background-image:url(img1.jpg);
+      background-size: cover;
+      background-position: center;
+      
+      font-family: helvetica;
+      }
+        input {
+      border: 0;
+      padding: 10px;
+      font-size: 18px;
+    }
+    input[type="submit"] {
+      background: aliceblue;
+      color: black;
+    }
+      label{
+display:inline-block;
+width:100px;
+margin-right:10px;
+text-align:right;
+}
+
+
+fieldset{
+border:none;
+width:500px;
+margin:0px auto;
+    
+      }
+</style>
+    
+
+    <body>
+        <script>
+             function verify(){
+            var dbObj = openDatabase('Mindstick', 1.0, 'My First Web-SQL Example', 2 * 1024 * 1024);
+
+                 dbObj.transaction(function (tx) {
+
+        tx.executeSql('CREATE TABLE IF NOT EXISTS RECIEVER (name,email,contact,street,locality,pincode,password)');
+
+    });
+
+        event.preventDefault(); // cancel default behavior
+        var email = document.getElementById("email").value;
+        var pass = document.getElementById("pwd").value;
+        dbObj.transaction(function(tx) {
+            
+            tx.executeSql('SELECT * FROM RECIEVER WHERE email=? AND password=?', [email, pass], function(tx, results) {
+                 if (results.rows) {
+                    window.location = "geo-points-distance.html";
+                 } else {
+                    alert("Invalid email or password");
+                 }
+            });
+        });
+    
+                 
+    
+}
+        </script>
+        
+        <p> <h3><font color="aliceblue"><br><h1>Login </h1><br>
+        <form name="myform"  method="POST"  class="form-horizontal inputForm">
+    
+<div class="form-group">
+          <label class="control-label col-sm-2" for="name"></label>
+          <div class="col-xs-6 col-xs-offset-3">
+          <input type="text"  placeholder="Email" name="email"  id="email" class="form-control" required><br><br></div>
+      </div>
+            <div class="form-group">
+          <label class="control-label col-sm-2" for="name"></label>
+          <div class="col-xs-6 col-xs-offset-3">
+          <input type="password"  placeholder="Password" name="pwd"  id="pwd" class="form-control" required><br><br></div>
+      </div>
+            <div class="form-group">
+          <div class="col-xs-6 col-xs-offset-3">
+        <input type="submit" value="Login" onclick=verify() >
+                </div>
+            </div>
+            
+           </form> </font></h3>
+        
+    
+    </body>
+</html>

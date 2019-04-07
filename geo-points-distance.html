@@ -1,0 +1,135 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="author" content="Green Ido | @greenido | plus.google.com/+greenido">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geo - Calculate the distance</title>
+  <meta name="description" content="Geo - Calculate the distance">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+  body {
+    font-size: 120%;
+      background-image: url("img1.jpg");
+  }
+  #demo {
+    padding: 1em;
+    background: black;
+    width: 10em;
+    border-radius: 1em;
+  }
+  Button {
+    padding: 1em;
+    font-size: 100%;
+    background:white;
+    border-radius: 0.3em;
+  }
+  #dis {
+    background: white;
+    padding: 2em;
+    border-radius: 20px;
+  }
+  #geo-input {
+    background: white;
+    padding: 1em;
+  }
+  #map {
+    padding: 1em;
+  }
+  </style>
+</head>
+
+<body>
+  <font color= "white"><h2>Geo - Calculate the distance between here and there</h2>
+  <div id="geo-input">
+    Geo1:
+    <input id="geo1" name="geo1" type="text" placeholder="32.00,34.33"> Geo2:
+    <input id="geo2" name="geo2" type="text" placeholder="32.00,34.33">
+    <button onclick="getDis()">Get Distance</button>
+  </div>
+  <div id="dis"></div>
+  <br>
+  <br>
+  <hr>
+  <p id="demo">Click the button to get your position.</p>
+  <button onclick="getLocation()">What is my location?</button>
+  <div id="map">
+  </div>
+    </font>
+  <script src="https://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
+  
+  <script>
+  function getDis() {
+    var geo1 = $("#geo1").val().split(",");
+    var geo2 = $("#geo2").val().split(",");
+    var distance = distanceBetween(geo1[0], geo1[1], geo2[0], geo2[1], "K");
+    console.log("geo dis: " + distance);
+    $("#dis").html("<h4>" + distance + "Km</h4>");
+  }
+
+  function distanceBetween(lat1, lon1, lat2, lon2, unit) {
+    var rlat1 = Math.PI * lat1 / 180
+    var rlat2 = Math.PI * lat2 / 180
+    var rlon1 = Math.PI * lon1 / 180
+    var rlon2 = Math.PI * lon2 / 180
+    var theta = lon1 - lon2
+    var rtheta = Math.PI * theta / 180
+    var dist = Math.sin(rlat1) * Math.sin(rlat2) + Math.cos(rlat1) * Math.cos(rlat2) * Math.cos(rtheta);
+    dist = Math.acos(dist)
+    dist = dist * 180 / Math.PI
+    dist = dist * 60 * 1.1515
+    if (unit == "K") {
+      dist = dist * 1.609344
+    }
+    if (unit == "N") {
+      dist = dist * 0.8684
+    }
+    return dist
+  }
+
+  //
+  // Check if we can get geo location and show it on a map in case we can.
+  //
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+      var status = document.getElementById("demo");
+      status.innerHTML = "Geolocation is not supported by this browser.";
+    }
+  }
+
+  function showPosition(position) {
+    var geoPoint = position.coords.latitude + "," + position.coords.longitude;
+    var status = document.getElementById("demo");
+    status.innerHTML = "Your location is: " + position.coords.latitude + " ,  " + position.coords.longitude;
+
+    // Get a nice map tile from google maps
+    var img_url = "http://maps.googleapis.com/maps/api/staticmap?center=" +
+      geoPoint + "&zoom=14&size=400x300&sensor=false";
+    document.getElementById("map").innerHTML = "<img src='" + img_url + "'>";
+  }
+
+  // show our errors for debuging
+  function showError(error) {
+    var x = document.getElementById("demo");
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        x.innerHTML = "Denied the request for Geolocation. Maybe, ask the user in a more polite way?"
+        break;
+      case error.POSITION_UNAVAILABLE:
+        x.innerHTML = "Location information is unavailable.";
+        break;
+      case error.TIMEOUT:
+        x.innerHTML = "The request to get location timed out.";
+        break;
+      case error.UNKNOWN_ERROR:
+        x.innerHTML = "An unknown error occurred :(";
+        break;
+    }
+  }
+  </script>
+</body>
+
+</html>
